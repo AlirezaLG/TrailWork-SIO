@@ -14,8 +14,12 @@
 <p>You can find some screenshots of application in /screenshots folder and sample csv exported file in /csv folder</p>
 <p>Command to run </p>
 <ul>
-    <li>1. composer install </li>
-    <li>2. php artisan serve </li>
-    <li>3. npm install && npm run dev </li>
-        
+    <li>composer install </li>
+    <li>composer require laravel/ui </li>
+    <li>php artisan ui bootstrap --auth</li>
+    <li>php artisan serve </li>
+    <li>npm install && npm run dev </li>   
 </ul>
+<p>
+please check the .env file for configuration if I didn't work
+</p>
