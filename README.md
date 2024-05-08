@@ -12,3 +12,10 @@
 #Code challenge at SIO
 
 <p>You can find some screenshots of application in /screenshots folder and sample csv exported file in /csv folder</p>
+<p>Command to run </p>
+<ul>
+    <li>1. composer install </li>
+    <li>2. php artisan serve </li>
+    <li>3. npm install && npm run dev </li>
+        
+</ul>
