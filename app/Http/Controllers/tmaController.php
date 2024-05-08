@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use App\Models\TMA;
 use App\Helper\MHelper;
-use Illuminate\Support\Facades\Session;
+
 
 class tmaController extends Controller
 {
@@ -30,7 +31,6 @@ class tmaController extends Controller
         // generate report for weekly 20 days per month 
         $monthlyTime = MHelper::weeklyWork($table, 20);
         
-
         return view('tma.index', compact('table','weeklyTime','monthlyTime'));
     }
 
@@ -55,7 +55,6 @@ class tmaController extends Controller
             'end_time'=>'required',
             'project_id'=>'required',
         ]);
-        
         // current user
         $userId = Auth::id();
         

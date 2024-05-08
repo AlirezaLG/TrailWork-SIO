@@ -30,7 +30,7 @@
                         <div class="form-control p-2">
                             <h3>Reports</h3>
                             <p>*For first 5 days/records, Weekly and monthly are equal but that period it change.(fastest
-                                solution for now, I will upgrade it if I found time)
+                                solution for now, I will upgrade it if I find time)
                             </p>
                             <div class="row mb-1">
                                 <div class="col-4">

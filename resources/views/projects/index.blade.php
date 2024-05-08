@@ -5,17 +5,36 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header ">{{ __('Dashboard') }}</div>
+                    <div class="card-header ">{{ __('Projects') }}</div>
 
 
                     <div class="card-body">
-                        @if (session('status'))
+                        @if (session('create'))
                             <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
+                                {{ session('create') }}
                             </div>
                         @endif
+
+                        @if (session('update'))
+                            <div class="alert alert-success" role="alert">
+                                {{ session('update') }}
+                            </div>
+                        @endif
+
+                        @if (session('delete'))
+                            <div class="alert alert-success" role="alert">
+                                {{ session('delete') }}
+                            </div>
+                        @endif
+
+                        <div class=" flex">
+                            <a href={{ route('projects.create') }} class=" btn btn-lg fs-6 btn-danger my-3 "> Create Project
+                            </a>
+
+                        </div>
+
                         <p class="mb-3">
-                            {{ __('If I had enough time I will work on project CRUD operation, At moment, table created and data read from database for Time log') }}
+                            {{ __('Only Edit works for now') }}
                         </p>
 
                         <table class="table">
@@ -37,10 +56,9 @@
 
                                         <td scope="col" class="text-center">
                                             <a href="#" class="btn btn-sm btn-primary">{{ __('View') }}</a>
-                                            <a href="#" class="btn btn-sm btn-warning">{{ __('Edit') }}</a>
+                                            <a href="{{ route('projects.edit', $row->id) }}"
+                                                class="btn btn-sm btn-warning">{{ __('Edit') }}</a>
                                             <a href="#" class="btn btn-sm btn-danger" />{{ __('Delete') }}</a>
-
-
                                         </td>
                                     </tr>
                                 @endforeach

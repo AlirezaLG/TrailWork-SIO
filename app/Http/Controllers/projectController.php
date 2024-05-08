@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Projects;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Session;
+
 class projectController extends Controller
 {
     /**
@@ -23,7 +25,7 @@ class projectController extends Controller
      */
     public function create()
     {
-        //
+        return view('projects.create');
     }
 
     /**
@@ -31,7 +33,16 @@ class projectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=>'required',
+        ]);
+        
+        Projects::create([
+            'name'=> $request->name,
+        ]);
+        Session::flash('create', "Project Successfully Created");
+
+        return to_route('projects.index');
     }
 
     /**
@@ -47,7 +58,8 @@ class projectController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $row = Projects::find($id);
+        return view('projects.edit', compact('row'));
     }
 
     /**
@@ -55,6 +67,16 @@ class projectController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
+        // validate the data
+        $request->validate([
+            'name'=>'required',
+        ]);
+
+        $row = Projects::find($request->id);
+        $row->update([ 'name'=> $request->name ]);
+        Session::flash('update', "Project updated successfully");
+        return to_route('projects.index');
         //
     }
 
@@ -63,6 +85,6 @@ class projectController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        
     }
 }

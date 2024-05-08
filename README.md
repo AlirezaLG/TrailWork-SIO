@@ -9,4 +9,6 @@
 
 ## Trail Work - SIO
 
-Code challenge at SIO
+#Code challenge at SIO
+
+<p>You can find some screenshots of application in /screenshots folder and sample csv exported file in /csv folder</p>
