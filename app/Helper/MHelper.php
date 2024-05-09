@@ -1,38 +1,55 @@
-<?php 
+<?php
+
 namespace App\Helper;
 
-class MHelper{
-    
-    static function formatWorkTime($date ,$stime , $etime){
-        // convert to timestamp to find the difference
-        $st = strtotime($date . $stime );
-        $et = strtotime($date . $etime );
-        
-        //diffrent in timestamp and in minute
-        $wt = abs( $st - $et ) /60 ;
-        
-        // reshape the time
-        $hour = floor($wt/60);
-        $minute =  $wt%60;
+class MHelper
+{
 
-        return $hour.' hr, '.$minute. ' min';
+    public static function reShapeWorkTime($date, $startTime, $endTime)
+    {
+        $startTimestamp = strtotime($date . $startTime);
+        $endTimestamp = strtotime($date . $endTime);
+
+        $timeDiffMinutes = abs($startTimestamp - $endTimestamp);
+
+        return self::formatTime($timeDiffMinutes);
     }
-    
-    static function weeklyWork($row, $working_days){
-        $wtime = array();
-        // find work time in last 5 days in Timestamp format
-        for($i = 0; $i < $working_days ;$i++ ){
-            $wtime[] =  isset($row[$i]) ? abs(strtotime($row[$i]->start_time) - strtotime($row[$i]->end_time))/60  : 0 ;
+
+    public static function totalWork($rows, $workingDays)
+    {
+        $totalTime = 0;
+
+        for ($i = 0; $i < $workingDays; $i++) {
+            $rowTime = isset($rows[$i]) ? strtotime($rows[$i]->end_time) - strtotime($rows[$i]->start_time) : 0;
+            $totalTime += $rowTime;
         }
-        
-        // calculate total time
-        $weekly_time = array_sum($wtime);
-        $hour = floor($weekly_time/60);
-        $minute =  $weekly_time%60;
-        return $hour.' hr, '.$minute. ' min';
-        
+
+        return self::formatTime($totalTime);
+    }
+
+    public static function totalTimesPerProject($projectsTimes)
+    {
+        $projectWorkTimes = [];
+
+        foreach ($projectsTimes as $index => $projectTimes) {
+            $totalProjectTime = 0;
+
+            foreach ($projectTimes->tmas as $timeLog) {
+                $logTime = strtotime($timeLog->date . $timeLog->end_time) - strtotime($timeLog->date . $timeLog->start_time);
+                $totalProjectTime += $logTime;
+            }
+
+            $projectWorkTimes[$index] = self::formatTime($totalProjectTime);
+        }
+
+        return $projectWorkTimes;
+    }
+
+    private static function formatTime($timeInSeconds)
+    {
+        $totalHours = floor($timeInSeconds / 3600);
+        $totalMinutes = ($timeInSeconds % 3600) / 60;
+
+        return "$totalHours hr, $totalMinutes min";
     }
 };
-
-
-

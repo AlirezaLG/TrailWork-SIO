@@ -10,29 +10,13 @@ use Illuminate\Support\Facades\Auth;
 Auth::routes();
 
 
-
 Route::middleware('auth')->group(function () {
 
-Route::get('/', [tmaController::class, 'index'])->name('tma.index');
-Route::get('/tma', [tmaController::class, 'index'])->name('tma.index');
-Route::get('/tma/create', [tmaController::class, 'create'])->name('tma.create');
-Route::get('/tma/{id}', [tmaController::class, 'show'])->name('tma.show');
-Route::get('/tma/{id}/edit', [tmaController::class, 'edit'])->name('tma.edit');
-Route::post('/tma', [tmaController::class, 'store'])->name('tma.store');
-Route::put('/tma/{id}', [tmaController::class, 'update'])->name('tma.update');
-Route::delete('/tma/{id}', [tmaController::class, 'destroy'])->name('tma.destroy');
+    Route::get('/', [tmaController::class, 'index'])->name('tma.index');
 
-Route::get('/export', [tmaController::class, 'export'])->name('tma.export');
+    Route::resource('tma', tmaController::class);
 
-Route::get('/projects', [projectController::class, 'index'])->name('projects.index');
-Route::get('/projects/create', [projectController::class, 'create'])->name('projects.create');
-Route::get('/projects/{id}/edit', [projectController::class, 'edit'])->name('projects.edit');
-Route::post('/projects', [projectController::class, 'store'])->name('projects.store');
-Route::put('/projects/{id}', [projectController::class, 'update'])->name('projects.update');
-Route::delete('/projects/{id}', [projectController::class, 'destroy'])->name('projects.destroy');
+    Route::get('/export', [tmaController::class, 'export'])->name('tma.export');
+
+    Route::resource('projects', projectController::class);
 });
-
-// tma routes
-// Route::middleware('auth')->group(function () {
-//     Route::resource('tma', tmaController::class);
-// });

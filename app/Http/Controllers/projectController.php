@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Projects;
-use Illuminate\Support\Facades\DB;
-
+use App\Models\Project;
 use Illuminate\Support\Facades\Session;
+use App\Helper\MHelper;
 
-class projectController extends Controller
+class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $projects = DB::table('projects')->orderBy("id","desc")->get();
-        
-        return view("projects.index", compact('projects'));
+        $rows = Project::latest()->get();
+        $projectsTimes = Project::with("tmas")->latest()->get();
+        $totalTimesPerProject = MHelper::totalTimesPerProject($projectsTimes);
+
+        return view("projects.index", compact('rows', 'totalTimesPerProject'));
     }
 
     /**
@@ -34,57 +35,58 @@ class projectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required',
+            'name' => 'required',
         ]);
-        
-        Projects::create([
-            'name'=> $request->name,
+
+        Project::create([
+            'name' => $request->name,
         ]);
-        Session::flash('create', "Project Successfully Created");
 
-        return to_route('projects.index');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return redirect()->route('projects.index')->with('create', 'Project Successfully Created');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $row = Projects::find($id);
+        $row = Project::findOrFail($id);
         return view('projects.edit', compact('row'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-
-        // validate the data
+        // Validate the data
         $request->validate([
-            'name'=>'required',
+            'name' => 'required|max:100',
         ]);
 
-        $row = Projects::find($request->id);
-        $row->update([ 'name'=> $request->name ]);
-        Session::flash('update', "Project updated successfully");
-        return to_route('projects.index');
-        //
+        $project = Project::findOrFail($id);
+        $project->update(['name' => $request->name]);
+
+        return redirect()->route('projects.index')->with('update', 'Project updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        
+        $project = Project::findOrFail($id);
+
+        try {
+            $project->delete();
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->errorInfo[1] == 1451) {
+                return redirect()->route('projects.index')->with('error', 'Cannot delete or update project: it is referenced by one or more TMA records.');
+            } else {
+                return redirect()->route('projects.index')->with('error', 'Database error occurred.');
+            }
+        }
+
+        return redirect()->route('projects.index')->with('delete', 'Successfully deleted');
     }
 }

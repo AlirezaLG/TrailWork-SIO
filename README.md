@@ -9,17 +9,17 @@
 
 ## Trail Work - SIO
 
-#Code challenge at SIO
+<p>You can find some screenshots of the application in the /screenshots folder and a sample CSV exported file in the /csv folder.</p>
 
-<p>You can find some screenshots of application in /screenshots folder and sample csv exported file in /csv folder</p>
-<p>Command to run </p>
 <ul>
-    <li>composer install </li>
-    <li>composer require laravel/ui </li>
-    <li>php artisan ui bootstrap --auth</li>
-    <li>php artisan serve </li>
-    <li>npm install && npm run dev </li>   
+<p>Commands to run:<p>
+<li>1. "composer install"</li>
+<li>2. "php artisan serve"</li>
+<li>3. "npm install && npm run dev"</li>
+<li>4. To seed the database, run "php artisan migrate --seed".</li>
 </ul>
-<p>
-please check the .env file for configuration if I didn't work
-</p>
+<br/>
+<p>Login data<p>
+<p>Email : test@example.com </p>
+<p>Password :  alireza22 </p>
+<p>Please check the .env file for configuration.</p>
