@@ -7,7 +7,6 @@
                 <div class="card">
                     <div class="card-header me-3">{{ __('Show') }}</div>
 
-
                     <div class="card-body">
                         @if (session('status'))
                             <div class="alert alert-success" role="alert">
@@ -18,7 +17,7 @@
                         <div class="list">
                             <div class="mb-2">
                                 <span class="fw-bold me-2">{{ __('User name') }}: </span>
-                                <span>{{ $user->name }}</span </div>
+                                <span>{{ $row->user->name }}</span </div>
                             </div>
                             <div class="mb-2">
                                 <span class="fw-bold me-2">{{ __('Date') }}: </span>
@@ -40,7 +39,7 @@
 
                             <div class="mb-2">
                                 <span class="fw-bold me-2">{{ __('Project Name') }}: </span>
-                                <span>{{ $project->name }}</span </div>
+                                <span>{{ $row->project->name }}</span </div>
                             </div>
                             <a href="{{ route('tma.index') }}" class="btn btn-primary mt-4">{{ __('Back') }}</a>
 

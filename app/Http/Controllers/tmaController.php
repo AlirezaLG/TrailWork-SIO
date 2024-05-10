@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\TmaRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use App\Models\Tma;
-use App\Models\Project;
 use App\Helper\MHelper;
 
 class TmaController extends Controller
 {
+    private TmaRepositoryInterface $tmaRepository;
+
+    public function __construct(TmaRepositoryInterface $tmaRepository)
+    {
+        $this->tmaRepository = $tmaRepository;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $rows = Tma::with(['user', 'project'])->latest()->get();
+        $rows = $this->tmaRepository->getAll();
         $weeklyTime = MHelper::totalWork($rows, 5);
         $monthlyTime = MHelper::totalWork($rows, 20);
         return view('tma.index', compact('rows', 'weeklyTime', 'monthlyTime'));
@@ -27,7 +32,7 @@ class TmaController extends Controller
      */
     public function create()
     {
-        $projects = Project::all();
+        $projects = $this->tmaRepository->create();
         return view('tma.create', compact('projects'));
     }
 
@@ -37,7 +42,7 @@ class TmaController extends Controller
     public function store(Request $request)
     {
         // Validate data 
-        $validatedData = $request->validate([
+        $request->validate([
             'date' => 'required|date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
@@ -47,17 +52,17 @@ class TmaController extends Controller
         // Reformat the time for better UX/UI
         $wtFormatted = MHelper::reShapeWorkTime($request->date, $request->start_time, $request->end_time);
 
-        Tma::create([
+        $data = array(
             'date' => $request->date,
             'user_id' => Auth::id(),
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'work_time' => $wtFormatted,
             'project_id' => $request->project_id,
-        ]);
+        );
 
-        Session::flash('create', "User Successfully Created");
-        return redirect()->route('tma.index');
+        $this->tmaRepository->storeDetail($data);
+        return redirect()->route('tma.index')->with('create', 'User Successfully Created');
     }
 
     /**
@@ -65,10 +70,8 @@ class TmaController extends Controller
      */
     public function show($id)
     {
-        $row = Tma::findOrFail($id);
-        $user = $row->user;
-        $project = $row->project;
-        return view('tma.show', compact('row', 'user', 'project'));
+        $row = $this->tmaRepository->getById($id);
+        return view('tma.show', compact('row'));
     }
 
     /**
@@ -76,8 +79,7 @@ class TmaController extends Controller
      */
     public function edit($id)
     {
-        $row = Tma::findOrFail($id);
-        $projects = Project::all();
+        [$row, $projects] = $this->tmaRepository->edit($id);
         return view('tma.edit', compact('row', 'projects'));
     }
 
@@ -87,27 +89,25 @@ class TmaController extends Controller
     public function update(Request $request, $id)
     {
         // Validate the data
-        $validatedData = $request->validate([
+        $request->validate([
             'date' => 'required|date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i',
             'project_id' => 'required|integer',
         ]);
 
-        $tma = Tma::findOrFail($id);
         $wtFormatted = MHelper::reShapeWorkTime($request->date, $request->start_time, $request->end_time);
-
-        // Update it 
-        $tma->update([
+        $data = array(
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'work_time' => $wtFormatted,
             'project_id' => $request->project_id,
-        ]);
+        );
 
-        Session::flash('update', "Time log updated successfully");
-        return redirect()->route('tma.index');
+        $this->tmaRepository->update($id, $data);
+
+        return redirect()->route('tma.index')->with('update', 'Time log updated successfully');
     }
 
     /**
@@ -115,10 +115,8 @@ class TmaController extends Controller
      */
     public function destroy($id)
     {
-        $tma = Tma::findOrFail($id);
-        $tma->delete();
-        session()->flash('delete', 'successfully deleted');
-        return redirect()->route('tma.index');
+        $this->tmaRepository->delete($id);
+        return redirect()->route('tma.index')->with('delete', 'successfully deleted');
     }
 
     /**
@@ -149,6 +147,7 @@ class TmaController extends Controller
             ]);
 
             // Fetch and process data in chunks
+
             Tma::with(['user', 'project'])->latest()->chunk(25, function ($tma) use ($handle) {
                 foreach ($tma as $row) {
                     // Extract data from each row.

@@ -28,7 +28,7 @@
 
                                 </div>
                                 <div class="mb-3 col-6">
-                                    <label class="form-label">Select a project {list come from DB}</label>
+                                    <label class="form-label">Select a project </label>
                                     <select name="project_id" class="form-select ">
                                         <option value="1" disabled>Projects</option>
                                         @foreach ($projects as $project)

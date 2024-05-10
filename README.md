@@ -11,15 +11,17 @@
 
 <p>You can find some screenshots of the application in the /screenshots folder and a sample CSV exported file in the /csv folder.</p>
 
-<ul>
-<p>Commands to run:<p>
-<li>1. "composer install"</li>
-<li>2. "php artisan serve"</li>
-<li>3. "npm install && npm run dev"</li>
-<li>4. To seed the database, run "php artisan migrate --seed".</li>
-</ul>
-<br/>
-<p>Login data<p>
-<p>Email : test@example.com </p>
-<p>Password :  alireza22 </p>
 <p>Please check the .env file for configuration.</p>
+
+<p>Commands to run:<>
+<ul>
+<li>1. "composer install"</li>
+<li>2. To seed the database, run "php artisan migrate --seed".</li>
+<li>3. "npm install && npm run dev"</li>
+<li>4. "php artisan serve"</li>
+</ul>
+
+<br/>
+Login data
+Email : test@example.com 
+Password :  alireza22

@@ -3,19 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Project;
-use Illuminate\Support\Facades\Session;
 use App\Helper\MHelper;
+use App\Repositories\ProjectRepositoryInterface;
 
 class ProjectController extends Controller
 {
+    private ProjectRepositoryInterface $projectRepository;
+
+    public function __construct(ProjectRepositoryInterface $projectRepository)
+    {
+        $this->projectRepository = $projectRepository;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $rows = Project::latest()->get();
-        $projectsTimes = Project::with("tmas")->latest()->get();
+        $rows = $this->projectRepository->getAll();
+        $projectsTimes = $this->projectRepository->getProjectTimes();
+
         $totalTimesPerProject = MHelper::totalTimesPerProject($projectsTimes);
 
         return view("projects.index", compact('rows', 'totalTimesPerProject'));
@@ -35,13 +41,9 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:64',
         ]);
-
-        Project::create([
-            'name' => $request->name,
-        ]);
-
+        $this->projectRepository->storeDetail(array('name' => $request->name));
         return redirect()->route('projects.index')->with('create', 'Project Successfully Created');
     }
 
@@ -50,7 +52,7 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        $row = Project::findOrFail($id);
+        $row = $this->projectRepository->edit($id);
         return view('projects.edit', compact('row'));
     }
 
@@ -61,11 +63,9 @@ class ProjectController extends Controller
     {
         // Validate the data
         $request->validate([
-            'name' => 'required|max:100',
+            'name' => 'required|string|max:64',
         ]);
-
-        $project = Project::findOrFail($id);
-        $project->update(['name' => $request->name]);
+        $this->projectRepository->update($id, array('name' => $request->name));
 
         return redirect()->route('projects.index')->with('update', 'Project updated successfully');
     }
@@ -75,10 +75,9 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-        $project = Project::findOrFail($id);
 
         try {
-            $project->delete();
+            $this->projectRepository->delete($id);
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->errorInfo[1] == 1451) {
                 return redirect()->route('projects.index')->with('error', 'Cannot delete or update project: it is referenced by one or more TMA records.');
